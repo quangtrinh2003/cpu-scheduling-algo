@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Scheduling Algorithms</title>
+    <link rel="stylesheet" href="./normalize.css">
+    <link rel="stylesheet" href="./style.css">
+    <script src="./script.js" defer></script>
+</head>
+<body>
+    <div id="input-form">
+        <form>
+            <ul>
+                <li class="title">
+                    <label>Arrival time</label>
+                    <label>Burst time</label>
+                </li>
+                <li class="box">
+                    <label>P1:</label>
+                    <input type="number" class="process" id="arrive" name="P1" required>
+                    <input type="number" class="process" id="bursttime" name="P1" required>
+                </li>   
+                <li id="quantum-input" style="text-align: center;">
+                    <label style="font-size: 20px;">Quantum time:</label>
+                    <input type="number" id="quantum" name="quantum" required>
+                </li>   
+                <li id="append-remove-row">
+                    <button type="submit" class="append row" onclick="appendRow()">+</button>
+                    <button type="submit" class="remove row" onclick="removeRow()">-</button>
+                </li>
+            </ul>
+            <button class="submit">Run</button>
+        </form>
+        <p id="demo"></p>
+    </div>
+
+    <div style="visibility: hidden; position: absolute;" id="algorithms">
+        <button onclick="returnToInputSite()" id="close">X</button>
+
+        <div class="algo fcfs">
+            <h1>FCFS</h1>
+            <div class="holder">
+                <div class="horizontal-line x-axis"></div>
+                <div class="arrow-right"></div>
+                <p>Time (ms)</p>
+            </div>
+
+            <div class="draw" style="position: relative;">
+            </div>
+
+            <div class="ready" style="position: relative;">
+                <h2>Ready</h2>
+            </div>
+
+            <table class="fcfs">
+                <tr>
+                    <th style="visibility: hidden;"></th>
+                    <th>Respond Time = Waiting time (ms)</th>
+                    <th>Turn Around Time (ms)</th>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="algo sjf">
+            <h1>SJF</h1>
+            <div class="holder">
+                <div class="horizontal-line x-axis"></div>
+                <div class="arrow-right"></div>
+
+            </div>
+
+            <div class="draw" style="position: relative;">
+                <div class="horizontal-line progress-axis"></div>
+            </div>
+
+            <div class="ready" style="position: relative;">
+                <h2>Ready</h2>
+            </div>
+
+            <table class="sjf">
+                <tr>
+                    <th style="visibility: hidden;"></th>
+                    <th>Respond Time = Waiting time (ms)</th>
+                    <th>Turn Around Time (ms)</th>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="algo srtf">
+            <h1>SRTF</h1>
+            <div class="holder">
+                <div class="horizontal-line x-axis"></div>
+                <div class="arrow-right"></div>
+            </div>
+
+            <div class="draw" style="position: relative;">
+                <div class="horizontal-line progress-axis"></div>
+            </div>
+
+            <div class="ready" style="position: relative;">
+                <h2>Ready</h2>
+            </div>
+
+            <table class="srtf">
+                <tr>
+                    <th style="visibility: hidden;"></th>
+                    <th>Respond time (ms)</th>
+                    <th>Waiting time (ms)</th>
+                    <th>Turn Around Time (ms)</th>
+                </tr>
+            </table>
+        </div>
+
+        <div class="algo rr">
+            <h1>Round Robin</h1>
+            <div class="holder">
+                <div class="horizontal-line x-axis"></div>
+                <div class="arrow-right"></div>
+            </div>
+
+            <div class="draw" style="position: relative;">
+                <div class="horizontal-line progress-axis"></div>
+            </div>
+
+            <div class="ready" style="position: relative;">
+                <h2>Ready</h2>
+            </div>
+
+            <table class="rr">
+                <tr>
+                    <th style="visibility: hidden;"></th>
+                    <th>Respond time (ms)</th>
+                    <th>Waiting time (ms)</th>
+                    <th>Turn Around Time (ms)</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
