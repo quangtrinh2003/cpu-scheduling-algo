@@ -1263,10 +1263,6 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
 
                     shiftedObjectHolder["times"] = 0;
                     shiftedObjectHolder["burst time"] = remainingTime;
-                        // tempHolder = shiftedObjectHolder;
-                        // shiftedObjectHolder = RRQueue.shift();
-                        // remainingTime = shiftedObjectHolder["burst time"]
-                        // RRQueue.push(tempHolder)
 
                     hrDashedLine = draw.querySelector(`hr.${shiftedObjectHolder.process}`);
 
@@ -2449,15 +2445,12 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
                     {
                         shiftedObjectHolder["times"] = 0;
                         shiftedObjectHolder["burst time"] = remainingTime
-                        // tempHolder = shiftedObjectHolder;
-                        // shiftedObjectHolder = RRQueue.shift();
-                        // remainingTime = shiftedObjectHolder["burst time"]
+
                         if(shiftedObjectHolder["picked yet"] === false)
                         {
                             shiftedObjectHolder["first picked"] = totalTime;
                             shiftedObjectHolder["picked yet"] = true;
                         }
-                        // RRQueue.push(tempHolder)
                     }
             }
             if(remainingTime === 0 && RRQueue.length === 0 && RRarray.length !== 0)
