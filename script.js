@@ -1229,6 +1229,11 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
                 {
                     horizontalLineQuery.style.width = `${(shiftedObjectHolder["remaining time"]) * 100 / 2}px`;
                     horizontalLineQuery.classList.remove(`${shiftedObjectHolder.process}`);
+                    if(shiftedObjectHolder["dashed line already"] === false)
+                    {
+                        hrDashedLine.style.width = `${(totalTime - shiftedObjectHolder.arrive - (shiftedObjectHolder["remaining time"] - shiftedObjectHolder["burst time"])) * 100 / 2}px`;
+                        shiftedObjectHolder["dashed line already"] = true;
+                    }
                     processCompleted++;
                 }
             }
