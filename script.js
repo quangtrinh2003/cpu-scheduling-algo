@@ -834,7 +834,7 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
             }
             else
             {
-                if(shiftedObjectHolder["times"] === quantum)
+                if(shiftedObjectHolder["times"] === quantum && shiftedObjectHolder["burst time"] !== 0)
                 {
                     let holderDivWithoutXClone = holderDiv.cloneNode(true)
                     let rtElement = holderDivWithoutXClone.querySelector('rt');
@@ -1248,7 +1248,7 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
             }
             else 
             {
-                if(shiftedObjectHolder["times"] === quantum)
+                if(shiftedObjectHolder["times"] === quantum && shiftedObjectHolder["burst time"] !== 0)
                 {
                     horizontalLineQuery.classList.remove(`${shiftedObjectHolder.process}`);
                     horizontalLineQuery.style.width = `${(shiftedObjectHolder["remaining time"] - shiftedObjectHolder["burst time"]) * 100 / 2}px`
@@ -2441,7 +2441,7 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
             }
             else
             {
-                if(shiftedObjectHolder["times"] === quantum)
+                if(shiftedObjectHolder["times"] === quantum && shiftedObjectHolder["burst time"] !== 0)
                     {
                         shiftedObjectHolder["times"] = 0;
                         shiftedObjectHolder["burst time"] = remainingTime
