@@ -147,8 +147,18 @@ function inputProcess(event)
     }
 }
 
+function returnToInputSite() 
+{
+    algorithms.style.visibility = 'hidden';
+    algorithms.style.position = 'absolute';
+    divFormHolder.style.visibility = 'visible';
+    divFormHolder.style.position = 'static';
+    location.reload()
+}
+
 function showAlgorithms(array, quantum)
 {
+    console.log(Array.from(array))
     sortArriveTime(array);
     calculateLineWidth(array);
     calculateDrawWidth();
@@ -167,15 +177,37 @@ function showAlgorithms(array, quantum)
     RR(array, quantum);
 }
 
-function returnToInputSite() 
+function FCFS(array)
 {
-    algorithms.style.visibility = 'hidden';
-    algorithms.style.position = 'absolute';
-    divFormHolder.style.visibility = 'visible';
-    divFormHolder.style.position = 'static';
-    location.reload()
+    appendProcessToReadyQueue(JSON.parse(JSON.stringify(array)), "FCFS");
+    drawMultipleVerticalLinesOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "FCFS");
+    drawHorizontalLineOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "FCFS");
+    calculateResultOfAlgorithms(JSON.parse(JSON.stringify(array)), "FCFS", array[0].arrive);
 }
 
+function SJF(array)
+{
+    appendProcessToReadyQueue(JSON.parse(JSON.stringify(array)), "SJF");
+    drawMultipleVerticalLinesOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "SJF")
+    drawHorizontalLineOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "SJF")
+    calculateResultOfAlgorithms(JSON.parse(JSON.stringify(array)), "SJF", array[0].arrive);
+}
+
+function SRTF(array)
+{
+    appendProcessToReadyQueue(JSON.parse(JSON.stringify(array)), "SRTF");
+    drawMultipleVerticalLinesOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "SRTF");
+    drawHorizontalLineOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "SRTF");
+    calculateResultOfAlgorithms(JSON.parse(JSON.stringify(array)), "SRTF", array[0].arrive);
+}
+
+function RR(array)
+{
+    appendProcessToReadyQueue(JSON.parse(JSON.stringify(array)), "RR");
+    drawMultipleVerticalLinesOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "RR");
+    drawHorizontalLineOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "RR")
+    calculateResultOfAlgorithms(JSON.parse(JSON.stringify(array)), "RR", array[0].arrive);
+}
 
 
 
@@ -1212,6 +1244,41 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
                         horizontalLineQuery = draw.querySelector(`.horizontal-line.progress-axis.${shiftedObjectHolder.process}`);
                         horizontalLineQuery.style.left = `${totalTime * 100 / 2}px`;
                     }
+                }
+            }
+            else 
+            {
+                if(shiftedObjectHolder["times"] === quantum)
+                {
+                    horizontalLineQuery.classList.remove(`${shiftedObjectHolder.process}`);
+                    horizontalLineQuery.style.width = `${(shiftedObjectHolder["remaining time"] - shiftedObjectHolder["burst time"]) * 100 / 2}px`
+
+                    if(shiftedObjectHolder["dashed line already"] === false)
+                    {
+                        hrDashedLine.style.width = `${(totalTime - shiftedObjectHolder.arrive - (shiftedObjectHolder["remaining time"] - shiftedObjectHolder["burst time"])) * 100 / 2}px`;
+                        shiftedObjectHolder["dashed line already"] = true;
+                    }
+
+                    shiftedObjectHolder["remaining time"] -= (shiftedObjectHolder["remaining time"] - shiftedObjectHolder["burst time"]);
+
+                    shiftedObjectHolder["times"] = 0;
+                    shiftedObjectHolder["burst time"] = remainingTime;
+                        // tempHolder = shiftedObjectHolder;
+                        // shiftedObjectHolder = RRQueue.shift();
+                        // remainingTime = shiftedObjectHolder["burst time"]
+                        // RRQueue.push(tempHolder)
+
+                    hrDashedLine = draw.querySelector(`hr.${shiftedObjectHolder.process}`);
+
+                    horizontalLineNodeClone = horizontalLine.cloneNode();
+                    horizontalLineNodeClone.classList.add(`${shiftedObjectHolder.process}`);
+                    horizontalLineNodeClone.style['grid-row-start'] = `${shiftedObjectHolder.process.substring(1)}`
+                    horizontalLineNodeClone.style['grid-row-end'] = `${Number(shiftedObjectHolder.process.substring(1)) + 1}`
+                    horizontalLineNodeClone.style['grid-column-start'] = "2"
+                    draw.appendChild(horizontalLineNodeClone)
+
+                    horizontalLineQuery = draw.querySelector(`.horizontal-line.progress-axis.${shiftedObjectHolder.process}`);
+                    horizontalLineQuery.style.left = `${totalTime * 100 / 2}px`;
                 }
             }
             if(remainingTime === 0 && RRQueue.length === 0 && RRarray.length !== 0)
@@ -2376,6 +2443,23 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
                     }
                 }
             }
+            else
+            {
+                if(shiftedObjectHolder["times"] === quantum)
+                    {
+                        shiftedObjectHolder["times"] = 0;
+                        shiftedObjectHolder["burst time"] = remainingTime
+                        // tempHolder = shiftedObjectHolder;
+                        // shiftedObjectHolder = RRQueue.shift();
+                        // remainingTime = shiftedObjectHolder["burst time"]
+                        if(shiftedObjectHolder["picked yet"] === false)
+                        {
+                            shiftedObjectHolder["first picked"] = totalTime;
+                            shiftedObjectHolder["picked yet"] = true;
+                        }
+                        // RRQueue.push(tempHolder)
+                    }
+            }
             if(remainingTime === 0 && RRQueue.length === 0 && RRarray.length !== 0)
             {
                 totalTime++;
@@ -2424,36 +2508,4 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
 
         trQuery.append(thRTNodeClone, thWTNodeClone, thTATNodeClone)
     }
-}
-
-function FCFS(array)
-{
-    appendProcessToReadyQueue(JSON.parse(JSON.stringify(array)), "FCFS");
-    drawMultipleVerticalLinesOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "FCFS");
-    drawHorizontalLineOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "FCFS");
-    calculateResultOfAlgorithms(JSON.parse(JSON.stringify(array)), "FCFS", array[0].arrive);
-}
-
-function SJF(array)
-{
-    appendProcessToReadyQueue(JSON.parse(JSON.stringify(array)), "SJF");
-    drawMultipleVerticalLinesOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "SJF")
-    drawHorizontalLineOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "SJF")
-    calculateResultOfAlgorithms(JSON.parse(JSON.stringify(array)), "SJF", array[0].arrive);
-}
-
-function SRTF(array)
-{
-    appendProcessToReadyQueue(JSON.parse(JSON.stringify(array)), "SRTF");
-    drawMultipleVerticalLinesOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "SRTF");
-    drawHorizontalLineOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "SRTF");
-    calculateResultOfAlgorithms(JSON.parse(JSON.stringify(array)), "SRTF", array[0].arrive);
-}
-
-function RR(array)
-{
-    appendProcessToReadyQueue(JSON.parse(JSON.stringify(array)), "RR");
-    drawMultipleVerticalLinesOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "RR");
-    drawHorizontalLineOnProgressAxis(JSON.parse(JSON.stringify(array)), array[0].arrive, "RR")
-    calculateResultOfAlgorithms(JSON.parse(JSON.stringify(array)), "RR", array[0].arrive);
 }
