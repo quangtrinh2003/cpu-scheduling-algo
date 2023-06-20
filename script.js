@@ -463,7 +463,7 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
     {
         const draw = document.querySelector(`.algo.fcfs .draw`);
         const FCFSarray = process;          //better naming
-        const FCFSqueue = [];
+        const readyQueue = [];
         let queueLength = arrayLength;
         let remainingTime = 0;
         let holderQueueElement = {};
@@ -474,11 +474,11 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
         {
             if(FCFSarray.length !== 0 && totalTime >= FCFSarray[0].arrive)
             {
-                FCFSqueue.push(FCFSarray.shift())
+                readyQueue.push(FCFSarray.shift())
             }
-            if(remainingTime === 0 && FCFSqueue.length >= 1)
+            if(remainingTime === 0 && readyQueue.length >= 1)
             {
-                holderQueueElement = FCFSqueue.shift()
+                holderQueueElement = readyQueue.shift()
                 remainingTime += holderQueueElement["burst time"];
                 totalTime += holderQueueElement["burst time"];
                 rtElement.textContent = totalTime;
@@ -515,7 +515,7 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
                 }
                 queueLength--;
             }
-            else if(remainingTime === 0 && FCFSqueue.length === 0 && FCFSarray.length !== 0)
+            else if(remainingTime === 0 && readyQueue.length === 0 && FCFSarray.length !== 0)
             {
                 appendVerticalLineDownLine = null
                 totalTime++;
@@ -535,26 +535,26 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
         let holderQueueElement = {};
         let appendVerticalLineDownLine = null;
         const SJFarray = process;          //better naming
-        const SJFQueue = [];
+        const readyQueue = [];
 
         while(queueLength !== 0)
         {
             if(SJFarray.length !== 0 && totalTime >= SJFarray[0].arrive) 
             {
-                SJFQueue.push(SJFarray.shift())
+                readyQueue.push(SJFarray.shift())
             }
-            if(remainingTime === 0 && SJFQueue.length >= 1)
+            if(remainingTime === 0 && readyQueue.length >= 1)
             {
-                if(SJFQueue.length !== 1)
+                if(readyQueue.length !== 1)
                 {
-                    SJFQueue.sort((a, b) => {
+                    readyQueue.sort((a, b) => {
                         if(a["burst time"] < b["burst time"])
                         {
                             return -1;
                         }
                     })
                 }  
-                holderQueueElement = SJFQueue.shift();
+                holderQueueElement = readyQueue.shift();
                 remainingTime += holderQueueElement["burst time"];
                 totalTime += holderQueueElement["burst time"];
                 rtElement.textContent = totalTime;
@@ -591,7 +591,7 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
                 }
                 queueLength--;
             }
-            else if(remainingTime === 0 && SJFQueue.length === 0 && SJFarray.length !== 0)
+            else if(remainingTime === 0 && readyQueue.length === 0 && SJFarray.length !== 0)
             {
                 appendVerticalLineDownLine = null
                 totalTime++;
@@ -618,7 +618,7 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
         let queueLength = 0;
         let remainingTime = 0;
         const SRTFarray = process;          //better naming
-        const SRTFQueue = [];
+        const readyQueue = [];
 
         //Init vertical lines with X to 0px left
         SRTFarray.forEach((e) => {
@@ -637,24 +637,24 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
         {
             if(SRTFarray.length !== 0 && totalTime >= SRTFarray[0].arrive)
             {
-                SRTFQueue.push(SRTFarray.shift());
+                readyQueue.push(SRTFarray.shift());
             }
 
-            queueLength = SRTFQueue.length;
+            queueLength = readyQueue.length;
             if(queueLength >= 1)
             {
-                smallestBurstTime = SRTFQueue.reduce((a, b) => {
+                smallestBurstTime = readyQueue.reduce((a, b) => {
                     return (a["burst time"] < b["burst time"]) ? a : b
-                }, SRTFQueue[0])
+                }, readyQueue[0])
                 for(let i = 0; i < queueLength; i++)
                 {
-                    if(SRTFQueue[i].process === smallestBurstTime.process)
+                    if(readyQueue[i].process === smallestBurstTime.process)
                     {
                         indexOfObject = i;
                         break;
                     }
                 }
-                SRTFQueue.splice(indexOfObject, 1);
+                readyQueue.splice(indexOfObject, 1);
 
                 if(holderQueueElement === null)
                 {
@@ -694,7 +694,7 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
                         tempHolder = holderQueueElement;
                         holderQueueElement = smallestBurstTime;
                         remainingTime = holderQueueElement["burst time"]
-                        SRTFQueue.push(tempHolder)
+                        readyQueue.push(tempHolder)
 
                         holderDivWithoutXClone = holderDiv.cloneNode(true)
                         rtElement = holderDivWithoutXClone.querySelector('rt');
@@ -708,11 +708,11 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
                     }
                     else
                     {
-                        SRTFQueue.push(smallestBurstTime)
+                        readyQueue.push(smallestBurstTime)
                     }
                 }
             }
-            if(remainingTime === 0 && SRTFQueue.length === 0 && SRTFarray.length !== 0)
+            if(remainingTime === 0 && readyQueue.length === 0 && SRTFarray.length !== 0)
             {
                 totalTime++;
             }
@@ -750,7 +750,7 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
         let RRarrayLength = 0;
         let remainingTime = 0;
         const RRarray = process;          //better naming
-        const RRQueue = [];
+        const readyQueue = [];
 
 
         //Init vertical lines with X to 0px left
@@ -775,19 +775,19 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
             RRarrayLength = RRarray.length;
             if(RRarrayLength !== 0 && totalTime >= RRarray[0].arrive)
             {
-                RRQueue.push(RRarray.shift());
+                readyQueue.push(RRarray.shift());
             }
 
-            if(RRQueue.length >= 1)
+            if(readyQueue.length >= 1)
             {
                 if(shiftedObjectHolder === null)
                 {
-                    shiftedObjectHolder = RRQueue.shift();
+                    shiftedObjectHolder = readyQueue.shift();
                     remainingTime = shiftedObjectHolder["burst time"]
                 }
                 else if(remainingTime === 0 && shiftedObjectHolder["burst time"] === 0)
                 {
-                    shiftedObjectHolder = RRQueue.shift();
+                    shiftedObjectHolder = readyQueue.shift();
                     remainingTime = shiftedObjectHolder["burst time"];
 
                     let holderDivWithoutXClone = holderDiv.cloneNode(true)
@@ -816,9 +816,9 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
                         shiftedObjectHolder["times"] = 0;
                         shiftedObjectHolder["burst time"] = remainingTime
                         tempHolder = shiftedObjectHolder;
-                        shiftedObjectHolder = RRQueue.shift();
+                        shiftedObjectHolder = readyQueue.shift();
                         remainingTime = shiftedObjectHolder["burst time"]
-                        RRQueue.push(tempHolder)
+                        readyQueue.push(tempHolder)
 
                         holderDivWithoutXClone = holderDiv.cloneNode(true)
                         rtElement = holderDivWithoutXClone.querySelector('rt');
@@ -848,7 +848,7 @@ function drawMultipleVerticalLinesOnProgressAxis(process, totalTime, algo)
                     shiftedObjectHolder["times"] = 0;
                 }
             }
-            if(remainingTime === 0 && RRQueue.length === 0 && RRarray.length !== 0)
+            if(remainingTime === 0 && readyQueue.length === 0 && RRarray.length !== 0)
             {
                 totalTime++;
             }
@@ -878,7 +878,7 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
     if(algo === "FCFS")
     {
         const FCFSarray = process;          //better naming
-        const FCFSqueue = [];
+        const readyQueue = [];
         const draw = document.querySelector('.algo.fcfs > .draw');
         const horizontalLine = document.createElement('div');
 
@@ -894,11 +894,11 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
         {
             if(FCFSarray.length !== 0 && totalTime >= FCFSarray[0].arrive)
             {
-                FCFSqueue.push(FCFSarray.shift())
+                readyQueue.push(FCFSarray.shift())
             }
-            if(remainingTime === 0 && FCFSqueue.length >= 1)
+            if(remainingTime === 0 && readyQueue.length >= 1)
             {
-                holderQueueElement = FCFSqueue.shift()
+                holderQueueElement = readyQueue.shift()
                 let calculatedHorizontalLineWidth = Number(holderQueueElement["burst time"]) * 100 / 2;
                 let horizontalLineNodeClone = horizontalLine.cloneNode();
                 horizontalLineNodeClone.style['grid-row-start'] = holderQueueElement.process.substring(1);
@@ -913,7 +913,7 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
 
                 queueLength--;
             }
-            else if(remainingTime === 0 && FCFSqueue.length === 0 && FCFSarray.length !== 0)
+            else if(remainingTime === 0 && readyQueue.length === 0 && FCFSarray.length !== 0)
             {
                 totalTime++;
             }
@@ -929,7 +929,7 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
         const draw = document.querySelector('.algo.sjf > .draw');
         const horizontalLine = document.createElement('div');
         const SJFArray = process;
-        const SJFQueue = [];
+        const readyQueue = [];
         let queueLength = process.length;
         let remainingTime = 0;
         let holderQueueElement = {};
@@ -940,20 +940,20 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
         {
             if(SJFArray.length !== 0 && totalTime >= SJFArray[0].arrive)
             {
-                SJFQueue.push(SJFArray.shift());
+                readyQueue.push(SJFArray.shift());
             }
-            if(remainingTime === 0 && SJFQueue.length >= 1)
+            if(remainingTime === 0 && readyQueue.length >= 1)
             {
-                if(SJFQueue.length !== 1)
+                if(readyQueue.length !== 1)
                 {
-                    SJFQueue.sort((a, b) => {
+                    readyQueue.sort((a, b) => {
                         if(a["burst time"] < b["burst time"])
                         {
                             return -1;
                         }
                     })
                 }
-                holderQueueElement = SJFQueue.shift();   
+                holderQueueElement = readyQueue.shift();   
                 remainingTime += holderQueueElement["burst time"];
                 let calculatedHorizontalLineWidth = Number(holderQueueElement["burst time"]) * 100 / 2;
                 let horizontalLineNodeClone = horizontalLine.cloneNode();
@@ -966,7 +966,7 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
                 totalTime += holderQueueElement["burst time"];
                 queueLength--;
             }
-            else if(remainingTime === 0 && SJFQueue.length === 0 && SJFArray.length !== 0)
+            else if(remainingTime === 0 && readyQueue.length === 0 && SJFArray.length !== 0)
             {
                 totalTime++
             }
@@ -982,7 +982,7 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
         const draw = document.querySelector('.algo.srtf > .draw');
         const horizontalLine = document.createElement('div');
         const SRTFarray = process;
-        const SRTFQueue = [];
+        const readyQueue = [];
         const totalProcess = arrayLength;
         let processCompleted = 0;
         let horizontalLineNodeClone;
@@ -990,7 +990,7 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
         let tempHolder = {};
         let indexOfObject = 0;
         let smallestBurstTime = {};
-        let SRTFQueueLength = 0;
+        let readyQueueLength = 0;
         let remainingTime = 0;
         let horizontalLineQuery;
         let hrDashedLine;
@@ -1018,24 +1018,24 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
         {
             if(SRTFarray.length !== 0 && totalTime >= SRTFarray[0].arrive)
             {
-                SRTFQueue.push(SRTFarray.shift());
+                readyQueue.push(SRTFarray.shift());
             }
 
-            if(SRTFQueue.length >= 1)
+            if(readyQueue.length >= 1)
             {
-                SRTFQueueLength = SRTFQueue.length;
-                smallestBurstTime = SRTFQueue.reduce((a, b) => {
+                readyQueueLength = readyQueue.length;
+                smallestBurstTime = readyQueue.reduce((a, b) => {
                     return (a["burst time"] < b["burst time"]) ? a : b;
-                }, SRTFQueue[0])
-                for(let i = 0; i < SRTFQueueLength; i++)
+                }, readyQueue[0])
+                for(let i = 0; i < readyQueueLength; i++)
                 {
-                    if(smallestBurstTime.process === SRTFQueue[i].process)
+                    if(smallestBurstTime.process === readyQueue[i].process)
                     {
                         indexOfObject = i;
                         break;
                     }
                 }
-                SRTFQueue.splice(indexOfObject, 1);
+                readyQueue.splice(indexOfObject, 1);
                 
                 if(holderQueueElement === null)
                 {
@@ -1093,7 +1093,7 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
                         tempHolder = holderQueueElement;
                         holderQueueElement = smallestBurstTime;
                         remainingTime = holderQueueElement["burst time"]
-                        SRTFQueue.push(tempHolder);
+                        readyQueue.push(tempHolder);
 
                         hrDashedLine = draw.querySelector(`hr.${holderQueueElement.process}`);
 
@@ -1109,11 +1109,11 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
                     }
                     else
                     {
-                        SRTFQueue.push(smallestBurstTime);
+                        readyQueue.push(smallestBurstTime);
                     }
                 }
             }
-            if(remainingTime === 0 && SRTFQueue.length === 0 && SRTFarray.length !== 0)
+            if(remainingTime === 0 && readyQueue.length === 0 && SRTFarray.length !== 0)
             {
                 totalTime++;
             }
@@ -1144,7 +1144,7 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
         const draw = document.querySelector('.algo.rr > .draw');
         const horizontalLine = document.createElement('div');
         const RRarray = process;
-        const RRQueue = [];
+        const readyQueue = [];
         const totalProcess = arrayLength;
         let processCompleted = 0;
         let horizontalLineNodeClone;
@@ -1179,14 +1179,14 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
             RRarrayLength = RRarray.length;
             if(RRarrayLength !== 0 && totalTime >= RRarray[0].arrive)
             {
-                RRQueue.push(RRarray.shift());
+                readyQueue.push(RRarray.shift());
             }
 
-            if(RRQueue.length >= 1)
+            if(readyQueue.length >= 1)
             {
                 if(shiftedObjectHolder === null)
                 {
-                    shiftedObjectHolder = RRQueue.shift();
+                    shiftedObjectHolder = readyQueue.shift();
                     remainingTime = shiftedObjectHolder["burst time"]
 
                     horizontalLineQuery = draw.querySelector(`.horizontal-line.progress-axis.${shiftedObjectHolder.process}`);
@@ -1195,7 +1195,7 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
                 }
                 else if(remainingTime === 0 && shiftedObjectHolder["burst time"] === 0)
                 {
-                    shiftedObjectHolder = RRQueue.shift();
+                    shiftedObjectHolder = readyQueue.shift();
                     remainingTime = shiftedObjectHolder["burst time"];
 
                     horizontalLineNodeClone = horizontalLine.cloneNode();
@@ -1228,9 +1228,9 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
                         shiftedObjectHolder["times"] = 0;
                         shiftedObjectHolder["burst time"] = remainingTime;
                         tempHolder = shiftedObjectHolder;
-                        shiftedObjectHolder = RRQueue.shift();
+                        shiftedObjectHolder = readyQueue.shift();
                         remainingTime = shiftedObjectHolder["burst time"]
-                        RRQueue.push(tempHolder)
+                        readyQueue.push(tempHolder)
 
                         hrDashedLine = draw.querySelector(`hr.${shiftedObjectHolder.process}`);
 
@@ -1277,7 +1277,7 @@ function drawHorizontalLineOnProgressAxis(process, totalTime, algo)
                     horizontalLineQuery.style.left = `${totalTime * 100 / 2}px`;
                 }
             }
-            if(remainingTime === 0 && RRQueue.length === 0 && RRarray.length !== 0)
+            if(remainingTime === 0 && readyQueue.length === 0 && RRarray.length !== 0)
             {
                 totalTime++;
             }
@@ -1678,7 +1678,7 @@ function appendProcessToReadyQueue(array, algo)
     {
         const ready = document.querySelector('.srtf > .ready');
         const totalProcess = arrayLength;
-        const SRTFQueue = [];
+        const readyQueue = [];
         let totalTime = array[0].arrive;
         let columnStart = Number(array[0].arrive) + 2;
         let columnEnd = Number(array[0].arrive) + 3;
@@ -1702,23 +1702,23 @@ function appendProcessToReadyQueue(array, algo)
         {
             if(array.length !== 0 && totalTime >= array[0].arrive)
             {
-                SRTFQueue.push(array.shift());
+                readyQueue.push(array.shift());
             }
 
-            if(SRTFQueue.length >= 1)
+            if(readyQueue.length >= 1)
             {
-                smallestBurstTime = SRTFQueue.reduce((a, b) => {
+                smallestBurstTime = readyQueue.reduce((a, b) => {
                     return (a["burst time"] < b["burst time"]) ? a : b
-                }, SRTFQueue[0])
-                for(let i = 0; i < SRTFQueue.length; i++)
+                }, readyQueue[0])
+                for(let i = 0; i < readyQueue.length; i++)
                 {
-                    if(SRTFQueue[i].process === smallestBurstTime.process)
+                    if(readyQueue[i].process === smallestBurstTime.process)
                     {
                         indexOfObject = i;
                         break;
                     }
                 }
-                SRTFQueue.splice(indexOfObject, 1);
+                readyQueue.splice(indexOfObject, 1);
 
                 if(holderQueueElement === null)
                 {
@@ -1741,11 +1741,11 @@ function appendProcessToReadyQueue(array, algo)
                         holderQueueElement = smallestBurstTime;
                         remainingTime = holderQueueElement["burst time"]
                         holderQueueElement["appeared"] = false;
-                        SRTFQueue.push(tempHolder)
+                        readyQueue.push(tempHolder)
                     }
                     else
                     {
-                        SRTFQueue.push(smallestBurstTime)
+                        readyQueue.push(smallestBurstTime)
                     }
                 }
 
@@ -1775,19 +1775,19 @@ function appendProcessToReadyQueue(array, algo)
 
                     holderQueueElement["appeared"] = true;
                 }
-                if(SRTFQueue.length !== 0)
+                if(readyQueue.length !== 0)
                 {
-                    const SRTFQueueLength = SRTFQueue.length;
-                    for(let i = 0; i < SRTFQueueLength; i++)
+                    const readyQueueLength = readyQueue.length;
+                    for(let i = 0; i < readyQueueLength; i++)
                     {
                         let divNonRedCircleNodeClone = divNonRedCircle.cloneNode();
                         let divTextHolderNodeClone = divHolder.cloneNode();
                         let subTextHolderNodeClone = subElement.cloneNode();
                         let supTextHolderNodeClone = supElement.cloneNode();
                     
-                        supTextHolderNodeClone.textContent = SRTFQueue[i]["burst time"];
-                        subTextHolderNodeClone.textContent = SRTFQueue[i].process.substring(1);
-                        divTextHolderNodeClone.append(SRTFQueue[i].process.charAt(0), supTextHolderNodeClone, subTextHolderNodeClone);
+                        supTextHolderNodeClone.textContent = readyQueue[i]["burst time"];
+                        subTextHolderNodeClone.textContent = readyQueue[i].process.substring(1);
+                        divTextHolderNodeClone.append(readyQueue[i].process.charAt(0), supTextHolderNodeClone, subTextHolderNodeClone);
                         divTextHolderNodeClone.style.fontSize = "20px"
                         divNonRedCircleNodeClone.appendChild(divTextHolderNodeClone);
                     
@@ -1811,7 +1811,7 @@ function appendProcessToReadyQueue(array, algo)
                 rowStart = 0;
                 rowEnd = 0;
             }
-            if(remainingTime === 0 && SRTFQueue.length === 0 && array.length !== 0)
+            if(remainingTime === 0 && readyQueue.length === 0 && array.length !== 0)
             {
                 totalTime++;
                 columnStart++;
@@ -1852,7 +1852,7 @@ function appendProcessToReadyQueue(array, algo)
         let columnStart = Number(array[0].arrive) + 2;
         let columnEnd = Number(array[0].arrive) + 3;
         const RRarray = array;          //better naming
-        const RRQueue = [];
+        const readyQueue = [];
 
         RRarray.forEach((e) => {
             e["times"] = 0;
@@ -1863,14 +1863,14 @@ function appendProcessToReadyQueue(array, algo)
             RRarrayLength = RRarray.length;
             if(RRarrayLength !== 0 && totalTime >= RRarray[0].arrive)
             {
-                RRQueue.push(RRarray.shift());
+                readyQueue.push(RRarray.shift());
             }
 
-            if(RRQueue.length >= 1)
+            if(readyQueue.length >= 1)
             {
                 if(shiftedObjectHolder === null)
                 {
-                    shiftedObjectHolder = RRQueue.shift();
+                    shiftedObjectHolder = readyQueue.shift();
                     remainingTime = shiftedObjectHolder["burst time"]
 
                     divRedCircleNodeClone = divRedCircle.cloneNode();
@@ -1894,11 +1894,10 @@ function appendProcessToReadyQueue(array, algo)
 
                     rowStart++;
                     rowEnd++;
-
                 }
                 else if(remainingTime === 0 && shiftedObjectHolder["burst time"] === 0)
                 {
-                    shiftedObjectHolder = RRQueue.shift();
+                    shiftedObjectHolder = readyQueue.shift();
                     remainingTime = shiftedObjectHolder["burst time"]
 
                     divRedCircleNodeClone = divRedCircle.cloneNode();
@@ -1930,9 +1929,9 @@ function appendProcessToReadyQueue(array, algo)
                         shiftedObjectHolder["times"] = 0;
                         shiftedObjectHolder["burst time"] = remainingTime
                         tempHolder = shiftedObjectHolder;
-                        shiftedObjectHolder = RRQueue.shift();
+                        shiftedObjectHolder = readyQueue.shift();
                         remainingTime = shiftedObjectHolder["burst time"]
-                        RRQueue.push(tempHolder)
+                        readyQueue.push(tempHolder)
 
                         divRedCircleNodeClone = divRedCircle.cloneNode();
                         divTextHolderNodeClone = divHolder.cloneNode();
@@ -1985,10 +1984,10 @@ function appendProcessToReadyQueue(array, algo)
                 }
             }
 
-            appendRemaining(RRQueue, rowStart, rowEnd, columnStart, columnEnd, "RR")
+            appendRemaining(readyQueue, rowStart, rowEnd, columnStart, columnEnd, "RR")
 
             
-            if(remainingTime === 0 && RRQueue.length === 0 && RRarray.length !== 0)
+            if(remainingTime === 0 && readyQueue.length === 0 && RRarray.length !== 0)
             {
                 totalTime++;
                 columnStart++;
@@ -2060,7 +2059,7 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
     {
         const table = document.querySelector('.algo.fcfs > table');
         const FCFSarray = process;
-        const FCFSqueue = [];
+        const readyQueue = [];
         let burstTime = 0;
         let shiftedObjectHolder = null;
         let queueLength = arrayLength;
@@ -2069,14 +2068,14 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
         {
             if(FCFSarray.length !== 0 && totalTime >= FCFSarray[0].arrive)
             {
-                FCFSqueue.push(FCFSarray.shift())
+                readyQueue.push(FCFSarray.shift())
             }
 
-            if(burstTime === 0 && FCFSqueue.length >= 1)
+            if(burstTime === 0 && readyQueue.length >= 1)
             {
                 if(burstTime === 0)
                 {
-                    shiftedObjectHolder = FCFSqueue.shift();
+                    shiftedObjectHolder = readyQueue.shift();
                     burstTime += shiftedObjectHolder["burst time"];
                     burstTime--
                     totalTime++;
@@ -2103,7 +2102,7 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
                 }
             }
 
-            if(burstTime === 0 && FCFSqueue.length === 0 && FCFSarray.length !== 0)
+            if(burstTime === 0 && readyQueue.length === 0 && FCFSarray.length !== 0)
             {
                 totalTime++;
             }
@@ -2245,7 +2244,7 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
     {
         const table = document.querySelector('.algo.srtf > table');
         const SRTFarray = process;
-        const SRTFQueue = [];
+        const readyQueue = [];
         const totalProcess = arrayLength;
         let processCompleted = 0;
         let holderQueueElement = null;
@@ -2264,23 +2263,23 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
         {
             if(SRTFarray.length !== 0 && totalTime >= SRTFarray[0].arrive)
             {
-                SRTFQueue.push(SRTFarray.shift());
+                readyQueue.push(SRTFarray.shift());
             }
 
-            if(SRTFQueue.length >= 1)
+            if(readyQueue.length >= 1)
             {
-                smallestBurstTime = SRTFQueue.reduce((a, b) => {
+                smallestBurstTime = readyQueue.reduce((a, b) => {
                     return (a["burst time"] < b["burst time"]) ? a : b
-                }, SRTFQueue[0])
-                for(let i = 0; i < SRTFQueue.length; i++)
+                }, readyQueue[0])
+                for(let i = 0; i < readyQueue.length; i++)
                 {
-                    if(SRTFQueue[i].process === smallestBurstTime.process)
+                    if(readyQueue[i].process === smallestBurstTime.process)
                     {
                         indexOfObject = i;
                         break;
                     }
                 }
-                SRTFQueue.splice(indexOfObject, 1);
+                readyQueue.splice(indexOfObject, 1);
 
                 if(holderQueueElement === null)
                 {
@@ -2317,15 +2316,15 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
                             holderQueueElement["first picked"] = totalTime
                             holderQueueElement["picked yet"] = true;
                         }
-                        SRTFQueue.push(tempHolder)
+                        readyQueue.push(tempHolder)
                     }
                     else
                     {
-                        SRTFQueue.push(smallestBurstTime)
+                        readyQueue.push(smallestBurstTime)
                     }
                 }
             }
-            if(remainingTime === 0 && SRTFQueue.length === 0 && SRTFarray.length !== 0)
+            if(remainingTime === 0 && readyQueue.length === 0 && SRTFarray.length !== 0)
             {
                 totalTime++;
             }
@@ -2377,7 +2376,7 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
     {
         const table = document.querySelector('.algo.rr > table');
         const RRarray = process;
-        const RRQueue = [];
+        const readyQueue = [];
         const totalProcess = arrayLength;
         let processCompleted = 0;
         let shiftedObjectHolder = null;
@@ -2396,14 +2395,14 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
             RRarrayLength = RRarray.length;
             if(RRarrayLength !== 0 && totalTime >= RRarray[0].arrive)
             {
-                RRQueue.push(RRarray.shift());
+                readyQueue.push(RRarray.shift());
             }
 
-            if(RRQueue.length >= 1)
+            if(readyQueue.length >= 1)
             {
                 if(shiftedObjectHolder === null)
                 {
-                    shiftedObjectHolder = RRQueue.shift();
+                    shiftedObjectHolder = readyQueue.shift();
                     remainingTime = shiftedObjectHolder["burst time"]
                     if(shiftedObjectHolder["picked yet"] === false)
                     {
@@ -2413,7 +2412,7 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
                 }
                 else if(remainingTime === 0 && shiftedObjectHolder["burst time"] === 0)
                 {
-                    shiftedObjectHolder = RRQueue.shift();
+                    shiftedObjectHolder = readyQueue.shift();
                     remainingTime = shiftedObjectHolder["burst time"]
                     if(shiftedObjectHolder["picked yet"] === false)
                     {
@@ -2428,14 +2427,14 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
                         shiftedObjectHolder["times"] = 0;
                         shiftedObjectHolder["burst time"] = remainingTime
                         tempHolder = shiftedObjectHolder;
-                        shiftedObjectHolder = RRQueue.shift();
+                        shiftedObjectHolder = readyQueue.shift();
                         remainingTime = shiftedObjectHolder["burst time"]
                         if(shiftedObjectHolder["picked yet"] === false)
                         {
                             shiftedObjectHolder["first picked"] = totalTime;
                             shiftedObjectHolder["picked yet"] = true;
                         }
-                        RRQueue.push(tempHolder)
+                        readyQueue.push(tempHolder)
                     }
                 }
             }
@@ -2453,7 +2452,7 @@ function calculateResultOfAlgorithms(process, algo, totalTime)
                         }
                     }
             }
-            if(remainingTime === 0 && RRQueue.length === 0 && RRarray.length !== 0)
+            if(remainingTime === 0 && readyQueue.length === 0 && RRarray.length !== 0)
             {
                 totalTime++;
             }
